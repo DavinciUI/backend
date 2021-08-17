@@ -55,8 +55,8 @@ type MenuItem struct {
 type ClickType int
 
 const (
-	LEFT_CLICK ClickType = 1 << iota
-	RIGHT_CLICK
+	LeftClick ClickType = 1 << iota
+	RightClick
 )
 
 type ItemMeta struct {

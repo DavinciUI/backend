@@ -13,7 +13,7 @@ func main() {
 	options := entity.CreateOptions(20, true, false)
 
 	actionReference := make(map[entity.ClickType]string)
-	actionReference[entity.LEFT_CLICK] = "test"
+	actionReference[entity.LeftClick] = "test"
 
 	itemExample := entity.CreateItem("STONE", "test", make([]string, 2), entity.ItemMeta{ModelData: 2}, actionReference)
 
@@ -36,5 +36,5 @@ func main() {
 		return
 	}
 
-	fmt.Println(cache.FindAll())
+	fmt.Println(cache.FindAll()[0])
 }
