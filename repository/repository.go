@@ -34,7 +34,11 @@ type CachedRepository struct {
 func (repository CachedRepository) Find(code code.Code) (entityModule.Entity, error) {
 	entity, err := repository.cache.Get(code)
 
-	return entity.(entityModule.Entity), err
+	if err != nil {
+		return nil, err
+	}
+
+	return entity.(entityModule.Entity), nil
 }
 
 func (repository CachedRepository) FindAll() (entities []entityModule.Entity) {
