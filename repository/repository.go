@@ -6,11 +6,11 @@ import (
 )
 import "github.com/bluele/gcache"
 
-func NewCachedRepository() CachedRepository {
+func NewCachedRepository() Repository {
 	return CachedRepository{
 		gcache.New(200).
 			LRU().
-			Expiration(time.Hour).
+			Expiration(time.Hour * 24).
 			Build(),
 	}
 }
@@ -21,10 +21,10 @@ type Entity interface {
 
 type Repository interface {
 
-	Find(code code.Code) Entity
+	Find(code code.Code) (Entity, error)
 	FindAll() []Entity
 	Delete(code code.Code)
-	Save(entity Entity)
+	Save(entity Entity) error
 
 }
 
@@ -49,4 +49,12 @@ func (repository CachedRepository) FindAll() (entities []Entity) {
 	}
 
 	return
+}
+
+func (repository CachedRepository) Delete(code code.Code) {
+	repository.cache.Remove(code)
+}
+
+func (repository CachedRepository) Save(entity Entity) error {
+	return repository.cache.Set(entity.GetCode(), entity)
 }

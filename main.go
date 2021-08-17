@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/DavinciUI/backend/code"
+	"github.com/DavinciUI/backend/repository"
 )
 
 func main() {
-	fmt.Println(code.GenerateNewCode())
+	cache := repository.NewCachedRepository()
+
+	fmt.Println(cache.FindAll())
 }
