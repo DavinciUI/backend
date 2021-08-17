@@ -2,9 +2,11 @@ package repository
 
 import (
 	"github.com/DavinciUI/backend/code"
+	"github.com/bluele/gcache"
 	"time"
 )
-import "github.com/bluele/gcache"
+
+import entityModule "github.com/DavinciUI/backend/entity"
 
 func NewCachedRepository() Repository {
 	return CachedRepository{
@@ -15,16 +17,13 @@ func NewCachedRepository() Repository {
 	}
 }
 
-type Entity interface {
-	GetCode() code.Code
-}
 
 type Repository interface {
 
-	Find(code code.Code) (Entity, error)
-	FindAll() []Entity
+	Find(code code.Code) (entityModule.Entity, error)
+	FindAll() []entityModule.Entity
 	Delete(code code.Code)
-	Save(entity Entity) error
+	Save(entity entityModule.Entity) error
 
 }
 
@@ -32,19 +31,19 @@ type CachedRepository struct {
 	cache gcache.Cache //not exported
 }
 
-func (repository CachedRepository) Find(code code.Code) (Entity, error) {
+func (repository CachedRepository) Find(code code.Code) (entityModule.Entity, error) {
 	entity, err := repository.cache.Get(code)
 
-	return entity.(Entity), err
+	return entity.(entityModule.Entity), err
 }
 
-func (repository CachedRepository) FindAll() (entities []Entity) {
+func (repository CachedRepository) FindAll() (entities []entityModule.Entity) {
 	internalCache := repository.cache.GetALL(true)
-	entities = make([]Entity, len(internalCache))
+	entities = make([]entityModule.Entity, len(internalCache))
 
 	i := 0
 	for _, entity := range internalCache {
-		entities[i] = entity.(Entity)
+		entities[i] = entity.(entityModule.Entity)
 		i++
 	}
 
@@ -55,6 +54,6 @@ func (repository CachedRepository) Delete(code code.Code) {
 	repository.cache.Remove(code)
 }
 
-func (repository CachedRepository) Save(entity Entity) error {
+func (repository CachedRepository) Save(entity entityModule.Entity) error {
 	return repository.cache.Set(entity.GetCode(), entity)
 }
