@@ -2,25 +2,22 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
+	"golang.org/x/time/rate"
 )
 
-var requestChannel = make(chan byte)
+var rateLimiter *rate.Limiter
 
-func MaxRequests(max int) gin.HandlerFunc {
-	if len(requestChannel) > max {
-		return abort
+// Limiter middleware to use in Global Router
+func Limiter(max int) gin.HandlerFunc {
+	rateLimiter = rate.NewLimiter(rate.Limit(max), max)
+	return limiterHandler
+}
+
+func limiterHandler(ctx *gin.Context) {
+	if rateLimiter.Allow() {
+		ctx.Next()
 	} else {
-		return next
+		ctx.JSON(411, "LIMIT_REQUEST_EXCEED")
+		ctx.Abort()
 	}
-}
-
-func abort(ctx *gin.Context) {
-	ctx.JSON(411, "LIMIT_REQUEST_EXCEED")
-	ctx.Abort()
-}
-
-func next(ctx *gin.Context) {
-	requestChannel <- 1
-	ctx.Next()
-	<- requestChannel
 }
