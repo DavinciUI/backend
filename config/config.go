@@ -20,6 +20,7 @@ func ParseConfigMap(env map[string]string) *Config {
 	return &Config{
 		env["ROUTER_PORT"],
 		rate,
+		env["AUTH_KEY"],
 	}
 }
 
@@ -27,5 +28,6 @@ type Config struct {
 
 	RouterPort string
 	RateLimit int
+	AuthKey string
 
 }

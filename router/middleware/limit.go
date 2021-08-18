@@ -17,7 +17,7 @@ func limiterHandler(ctx *gin.Context) {
 	if rateLimiter.Allow() {
 		ctx.Next()
 	} else {
-		ctx.JSON(411, "LIMIT_REQUEST_EXCEED")
+		ctx.JSON(429, "LIMIT_REQUEST_EXCEED")
 		ctx.Abort()
 	}
 }
